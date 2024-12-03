@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #4facfe;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+        }
+        textarea:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 8px rgba(79, 172, 254, 0.5);
+        }
+        button {
+            background: #4facfe;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #0093e9;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #444;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Review Sentiment Analyzer</h1>
+        <textarea id="review" placeholder="Enter your review here..."></textarea>
+        <button onclick="analyzeSentiment()">Analyze</button>
+        <div id="result"></div>
+        <footer>Powered by AI Sentiment Analysis</footer>
+    </div>
+
+    <script>
+        async function analyzeSentiment() {
+            const review = document.getElementById('review').value.trim();
+            if (!review) {
+                alert("Please enter a review!");
+                return;
+            }
+    
+            try {
+                const response = await fetch('http://127.0.0.1:5000/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ review })
+                });
+    
+                const data = await response.json();
+                const resultDiv = document.getElementById('result');
+                resultDiv.textContent = `Sentiment: ${data.sentiment} (Score: ${data.score.toFixed(2)})`;
+                resultDiv.style.color = data.sentiment === "Positive" ? "#28a745" : "#dc3545";
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while analyzing the sentiment.");
+            }
+        }
+    </script>
+</body>
+</html>
